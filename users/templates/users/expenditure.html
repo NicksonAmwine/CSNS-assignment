@@ -1,0 +1,159 @@
+{% extends "users/base.html" %}
+{% block title %} Home Page {% endblock title%}
+{% block content %}
+    <div class="jumbotron">
+        <!--<h2 class="display-4">Welcome, {{user.first_name.title|default:'Guest'}}</h2> -->
+        <h1 class="display-4">Expenditure Details</h1>
+        <p class="lead">
+            <!-- Your existing content here -->
+        </p>
+        <hr class="my-4">
+        <p class="lead">
+            {% if user.is_authenticated %}
+                <a class="btn btn-primary btn-lg" href="{% url 'logout' %}" role="button">Logout</a>
+            {% else %}
+                <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Sign in</a>
+            {% endif %}
+        </p>
+
+        <!-- Table with invisible columns -->
+        <table class="table">
+            <thead>
+                <tr style="visibility: collapse;">
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Actions</th> <!-- New column for buttons -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example rows with buttons triggering the modal -->
+                <tr>
+                    <td>Groceries</td>
+                    <td>2</td>
+                    <td>UGX 450,000.00</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showUpdateForm({ action: 'update', item: 'Groceries' })">Update</button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteConfirmation({ action: 'delete', item: 'Groceries' })">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Medical</td>
+                    <td>2</td>
+                    <td>UGX 852,000.00</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showUpdateForm({ action: 'update', item: 'Medical' })">Update</button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteConfirmation({ action: 'delete', item: 'Medical' })">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Utilities</td>
+                    <td>1</td>
+                    <td>UGX 75,000.00</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showUpdateForm({ action: 'update', item: 'Utilities' })">Update</button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteConfirmation({ action: 'delete', item: 'Utilities' })">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Transport</td>
+                    <td>7</td>
+                    <td>UGX 300,000.00</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showUpdateForm({ action: 'update', item: 'Transport' })">Update</button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteConfirmation({ action: 'delete', item: 'Transport' })">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Rent</td>
+                    <td>2</td>
+                    <td>UGX 600,000.00</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showUpdateForm({ action: 'update', item: 'Rent' })">Update</button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteConfirmation({ action: 'delete', item: 'Rent' })">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Data and Telephone</td>
+                    <td>2</td>
+                    <td>UGX 150,000.00</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="showUpdateForm({ action: 'update', item: 'Data and Telephone' })">Update</button>
+                        <button class="btn btn-danger btn-sm" onclick="showDeleteConfirmation({ action: 'delete', item: 'Data and Telephone' })">Delete</button>
+                    </td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+        <button class="btn btn-success" onclick="showAddForm()">Add</button>
+    </div>
+
+    <!-- PIN Modal -->
+    <div class="modal fade" id="pinModal" tabindex="-1" role="dialog" aria-labelledby="pinModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pinModalLabel">Enter PIN to Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="pinForm">
+                        <div class="form-group">
+                            <label for="pin">PIN:</label>
+                            <input type="password" class="form-control" id="pin" required>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="validatePin()">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var currentItem;  // Variable to store the current item being updated or deleted
+
+    function showUpdateForm(item) {
+        currentItem = item;
+        $('#pinModal').modal('show');
+    }
+
+    function showDeleteConfirmation(item) {
+        currentItem = item;
+        $('#pinModal').modal('show');
+    }
+    function showAddForm() {
+        currentItem = { action: 'add_expenditure' };
+        $('#pinForm').attr('action', '{% url 'add_expenditure' %}');  // Replace 'add_action' with your actual add action URL
+        $('#pinModal').modal('show');
+    }
+
+    function validatePin() {
+        // Add logic to validate the entered PIN
+        // For simplicity, you can compare it with a hardcoded PIN
+        var enteredPin = document.getElementById('pin').value;
+        var correctPin = '1234';  // Replace with your actual PIN
+        if (enteredPin === correctPin) {
+            // PIN is correct, proceed with update or delete action
+            if (currentItem) {
+                // Check if an item is selected
+                if (currentItem.action === 'update') {
+                    // Trigger the update action (replace this with your actual logic)
+                    console.log('Updating item:', currentItem.item);
+                    // Add your logic to show the update form or perform the update
+                } else if (currentItem.action === 'delete') {
+                    // Trigger the delete action (replace this with your actual logic)
+                    console.log('Deleting item:', currentItem.item);
+                    // Add your logic to show the delete confirmation or perform the delete
+                }
+            }
+
+            // Close the modal
+            $('#pinModal').modal('hide');
+        } else {
+            alert('Incorrect PIN. Please try again.');
+        }
+    }
+    </script>
+{% endblock content %}
